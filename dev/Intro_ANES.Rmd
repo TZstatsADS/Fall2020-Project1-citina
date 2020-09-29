@@ -106,16 +106,15 @@ First let's look at our data. One advantage of using the SPSS SAV data is that t
 ```{r labelled variables subset}
 Election_years=as.character(seq(1952, 2016, 4))
 
-anes_use=anes_dat%>%
-  mutate(
-    year=as_factor(VCF0004),
+anes_use <- anes_dat %>% 
+  mutate( 
+    year=as.factor(VCF0004), 
     turnout=as_factor(VCF0703),
     vote=as_factor(VCF0706),
     race=as_factor(VCF0105a),
     gender=as_factor(VCF0104)
-  )%>%
-  filter(year %in% Election_years)
-
+)%>%
+filter(year %in% Election_years)
 library(data.table)
 
 data.table(anes_use%>%

@@ -1,0 +1,479 @@
+---
+title: "Whom did people care about black people vote for?"
+author: "Citina Liang"
+date: "9/29/2020"
+output: pdf_document
+---
+### as we know this year, the black lives matter, and the election year, will the history change? people pay attention to black people's rights become more, so I am curious who did those people really care about black people, and think black people should have more equal rights vote for, and what are their charasterics. I am conveying the truth in the past survies, no personal opioions.
+
+```{r load libraries, warning=FALSE, message=FALSE, include=FALSE}
+packages.used=as.list(
+  c(
+  "tidyverse",
+  "haven",
+  "devtools",
+  "RColorBrewer",
+  "data.table",
+  "ggplot2")
+)
+
+check.pkg = function(x){
+  if(!require(x, character.only=T)) install.packages(x, 
+                                                     character.only=T,
+                                                     dependence=T)
+}
+
+lapply(packages.used, check.pkg)
+```
+
+```{r message=F, include=FALSE} 
+library(haven)
+anes_dat <- read_sav("../data/anes_timeseries_cdf.sav")
+#echo
+```
+
+```{r include=FALSE}
+#narrow down the years
+Election_years=as.character(seq(1972, 2016, 4))
+
+#choose variables we are interested in
+anes_use <- anes_dat %>% 
+  mutate( 
+    #demographic
+    year = as.factor(VCF0004), 
+    race = as_factor(VCF0105a),
+    gender = as_factor(VCF0104),
+    age = as_factor(VCF0102),
+    education = as_factor(VCF0110),
+    occupation = as_factor(VCF0115),
+    
+    #vote or not
+    voted_president = as_factor(VCF0706),
+    #why_this_president = as_factor(VCF0498d),
+    strength_of_pref = as_factor(VCF9022),
+    #trust_which_branch = as_factor(VCF0632),
+    #white = as_factor(VCF9270),
+    #his = as_factor(VCF9271),
+    #asian = as_factor(VCF9273),
+    #blck
+    #demo_blck_aids = as_factor(VCF0517),
+    #repub_blck_aids = as_factor(VCF0518),
+    #gov_blck_fair_job = as_factor(VCF9037), #gov should ensure fair jobs for blcks
+    blck_hard_succeed = as_factor(VCF9039), #conditions make it diff for blcks to succeed
+    blck_not_spec = as_factor(VCF9040), #blcks should not have special favors to succeed
+    blck_got_less = as_factor(VCF9042), #blcks got less than they deserve over the past few years
+    #blck_hardworking_lazy = as_factor(VCF9271),
+    blck_influence_politics = as_factor(VCF9275), #blacks have too much, right amount, or too little influence in politics
+    aid_to_blck = as_factor(VCF0830), #Aid to Blacks Scale
+    blck_hiring = as_factor(VCF0867), #preferential hiring and promotion of blacks?
+    ) %>%
+  filter(year %in% Election_years) %>% 
+  droplevels()
+
+anes_use <- anes_use %>% select(year, race, gender, age, education, occupation, 
+                                voted_president, strength_of_pref, 
+                                blck_hard_succeed, blck_not_spec, blck_try_harder, blck_got_less,
+                                blck_influence_politics, aid_to_blck, blck_hiring)
+
+anes_use <- anes_use %>% filter(!is.na(voted_president) & !is.na(gender) & !is.na(race)
+                                & !is.na(age) & !is.na(aid_to_blck) & !is.na(blck_not_spec)
+                                & !is.na(blck_hard_succeed) & !is.na(blck_got_less) & !is.na(blck_try_harder)) %>%  droplevels()
+
+library(DT)
+#datatable(anes_use, options = list(pageLength = 5))
+levels(anes_use$voted_president) <- c("1. Democrat", "2. Republican", "3. Other (incl. 3d/minor party candidates and write-ins)",
+                                      "3. Other (incl. 3d/minor party candidates and write-ins)", 
+                                      "7. Did not vote or voted but not for president (exc.1972)")
+
+save(anes_use, file="../output/data_use.RData")
+```
+
+### Some background:
+### The Voting Rights Act of 1965, signed into law by President Lyndon B. Johnson, aimed to overcome legal barriers at the state and local levels that prevented African Americans from exercising their right to vote as guaranteed under the 15th Amendment to the U.S. Constitution. The Voting Rights Act is considered one of the most far-reaching pieces of civil rights legislation in U.S. history.
+### 1868 all male naturailzed born citizens
+### 1920 women can vote
+### 1943 chinese immigrants
+### 1971 adults 18-21 can vote
+### select these years with questions we are interested asked, 1988 1992 2000 2004 2008 2012 2016
+
+### General findings
+```{r message=FALSE, warning=F}
+cbPalette <- c("#56B4E9", "#D55E00", "#009E73", "#F0E442", "#E69F00", "#0072B2", "#CC79A7", "#F0E449")
+
+df1 <- anes_use %>% 
+  select(year, voted_president) %>% 
+  group_by(year, voted_president) %>% 
+  count(voted_president) %>% 
+  group_by(year) %>% 
+  mutate(prop = n/sum(n))
+  
+ggplot(df1, aes(x=year, y=prop, fill=voted_president)) +
+  geom_bar(stat='identity')+
+  labs(title='Whom did American vote?',
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  geom_text(geom='text', position = 'stack', aes(x=year, y=prop, label=round(prop,2)), size=2)+
+  theme_minimal()
+```
+
+#### Ingeneral, the diffences between Democrat and Republican are not large, expect for in 2008 (president Obama), the difference was 0.25. And we can see even sometimes one party has higher percentage of voted, the final result doesn't bring into correspondence. One example is the election in 2016, the percentage voted for Democrat is 3% higher than Republican, and as oppose to many medias would expect, Republican won the election. This is because of the U.S. system of election of president.
+
+### by gender, race
+```{r}
+df2 <- anes_use %>% 
+  select(year, voted_president, race) %>% 
+  group_by(year, race) %>% 
+  count(voted_president) %>% 
+  group_by(year, race) %>% 
+  mutate(prop = round(n/sum(n),2))
+
+ggplot(df2, aes(x=year, y=prop, fill=voted_president)) +
+  geom_bar(stat='identity')+
+  facet_wrap(~race, ncol=1)+
+  labs(title='Whom did different racial groups vote?',
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  #geom_text(geom='text', position = 'stack', aes(x=year, y=prop, label=prop,2), size=2)+
+  theme_minimal()
+```
+
+#### One interesting finding here is in 2012, most of black people voted for Democrat (Obama) without any suprise. In the same year, white people tend to vote for Republican, the percentage is similar, but still, higher in Republican. For other races, the percentage of Demorcrat is higher than Republican in general.
+
+#### Another interesting finding is in 2016, an obvious higher percentage in people with other races expect white voted for Democrat rather than Republican. 
+
+### Who cares about black people's rights?
+#### variables we have to measure if a voter care about black people:
+
++ Conditions Make it Difficult for Blacks to Succeed?
+
++ Blacks Should Not Have Special Favors to Succeed?
+
++ Blacks Gotten Less than They Deserve Over the Past Few Years?
+
+  1. Agree strongly
+  2. Agree somewhat
+  3. Neither agree nor disagree
+  4. Disagree somewhat
+  5. Disagree strongly
+  8. DK
+  
++ Aid to Blacks Scale
+
+  1. Government should help minority groups/blacks
+  2.
+  3.
+  4.
+  5.
+  6.
+  7. Minority groups/ blacks should help themselves
+  9. DK; haven't thought much about it
+  0. NA; telephone IW (2000); no Post IW INAP. question not used
+  
++ In American politics, do blacks have too much, about the right amount of, or too little influence?
+
+  1. Too much influence
+  2. Just about the right amount
+  3. Too little influence
+  -8. DK
+  -9. RF; NA; no post data INAP. Inap. question not used
+
++ are you for or against preferential hiring and promotion of blacks?
+  1. For
+  5. Against
+  8. DK; 1990-1994: refused; 1996 and later: other
+  9. NA; Form A (1986); form B (1990); no Post IW INAP. question not used
+
+#### About the survey demographic
+```{r message=FALSE, warning=FALSE}
+df3 <- anes_use %>% 
+  select(year, race, gender, age, education, occupation) %>% 
+  group_by(year) %>% 
+  count(race) %>% 
+  mutate(prop = round(n/sum(n),2))
+
+ggplot(df3, aes(x=year, y=prop, fill=race)) +
+  geom_bar(stat='identity')+
+  labs(title='Races of people who voted over years',
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  #geom_text(geom='text', position = 'stack', aes(x=year, y=prop, label=prop,2), size=2)+
+  theme_minimal()
+
+df4 <- anes_use %>% 
+  select(year, gender, age, education, occupation) %>% 
+  group_by(year) %>% 
+  count(gender) %>% 
+  mutate(prop = round(n/sum(n),2))
+
+ggplot(df4, aes(x=year, y=prop, fill=gender)) +
+  geom_bar(stat='identity')+
+  labs(title='Gender of people who voted over years',
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  geom_text(geom='text', position = 'stack', aes(x=year, y=prop, label=prop), size=2)+
+  theme_minimal()
+
+df5 <- anes_use %>% 
+  select(year, age, education, occupation) %>% 
+  group_by(year) %>% 
+  count(education) %>% 
+  mutate(prop = round(n/sum(n),2))
+
+ggplot(df5, aes(x=year, y=prop, fill=education)) +
+  geom_bar(stat='identity')+
+  labs(title='Education of people who voted over years',
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  geom_text(geom='text', position = 'stack', aes(x=year, y=prop, label=prop), size=2)+
+  theme_minimal()
+
+df6 <- anes_use %>% 
+  select(year, age, occupation) %>% 
+  group_by(year) %>% 
+  count(age) %>% 
+  mutate(prop = round(n/sum(n),2))
+
+ggplot(df6, aes(x=year, y=prop, fill=age)) +
+  geom_bar(stat='identity')+
+  labs(title='Age group of people who voted over years',
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  geom_text(geom='text', position = 'stack', aes(x=year, y=prop, label=prop), size=2)+
+  theme_minimal()
+
+df7 <- anes_use %>% 
+  select(year, occupation) %>% 
+  group_by(year) %>% 
+  count(occupation) %>% 
+  mutate(prop = round(n/sum(n),2))
+
+ggplot(df7, aes(x=year, y=prop, fill=occupation)) +
+  geom_bar(stat='identity')+
+  labs(title='occupations of people who voted over years',
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  #geom_text(geom='text', position = 'stack', aes(x=year, y=prop, label=prop), size=2)+
+  theme_minimal()
+```
+
++ The race percentage higest first three: White, Balck non-Hispanic, Hispanic
++ More women than men
++ Starting from 2000, over half of the people who voted are with at least some college degreesnot necessarliy people with high education being more active since 2000, can be education level are higher in general
++ Occupation data in 2008, 2012 and 2016 are not available, the question was not asked in these years
+
+
+```{r}
+anes_use %>% head(20)
+```
+
+#### What are the survey results for those questions we are interested in?
+```{r message=FALSE, warning=FALSE}
+df8 <- anes_use %>% 
+  select(race, blck_hard_succeed) %>% 
+  group_by(blck_hard_succeed) %>% 
+  count(race) %>% 
+  mutate(prop = round(n/sum(n),2))
+
+ggplot(df8, aes(x=blck_hard_succeed, y=prop, fill=race)) +
+  geom_bar(stat='identity')+
+  labs(title='Do you agree conditions make it difficult for blacks to succeed?',
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  #geom_text(geom='text', position = 'stack', aes(x=year, y=prop, label=prop), size=2)+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90))
+
+df81 <- anes_use %>% 
+  select(race, blck_hard_succeed) %>% 
+  group_by(race) %>% 
+  count(blck_hard_succeed) %>% 
+  mutate(prop = round(n/sum(n),2))
+levels(df81$race) <- c("White non-His", "Black non-His", "Asian or Pacific Islander", 
+                  "American Indian or Alaska Native", "Hispanic", "Other")
+
+ggplot(df81, aes(x=race, y=prop, fill=blck_hard_succeed)) +
+  geom_bar(stat='identity')+
+  labs(title='Do you agree conditions make it difficult for blacks to succeed?',
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  geom_text(geom='text', position = 'stack', aes(x=race, y=prop, label=prop), size=2)+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90))
+```
++ of those who are strongly agree, most are XXX, but since there are more XXX in the survey, we gonna look at the graph in another way
++ on the second graph XX we can see the precetages of *White, Asian or Pacific Islander, American Indian or Alaska Native and other race* agree and disagree with this statement are similar almost half and half; and as expected, most *Black* people strongly or somewhat agree with it; also, of those *Hispanic* people, agree is higher than not agree 
+
+```{r message=FALSE, warning=FALSE}
+df9 <- anes_use %>% 
+  select(race, blck_not_spec) %>% 
+  group_by(race) %>% 
+  count(blck_not_spec) %>% 
+  mutate(prop = round(n/sum(n),2))
+levels(df9$race) <- c("White non-His", "Black non-His", "Asian or Pacific Islander", 
+                  "American Indian or Alaska Native", "Hispanic", "Other")
+
+ggplot(df9, aes(x=race, y=prop, fill=blck_not_spec)) +
+  geom_bar(stat='identity')+
+  labs(title='Do you agree Blacks Should Not Have Special Favors to Succeed?',
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  geom_text(geom='text', position = 'stack', aes(x=race, y=prop, label=prop), size=2)+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+```{r message=FALSE, warning=FALSE}
+ #    blck_got_less = as_factor(VCF9042), #blcks got less than they deserve over the past few years
+ #    #blck_hardworking_lazy = as_factor(VCF9271),
+ #    blck_influence_politics = as_factor(VCF9275), #blacks have too much, right amount, or too little influence in politics
+ #    aid_to_blck = as_factor(VCF0830), #Aid to Blacks Scale
+ #    blck_hiring = as_factor(VCF0867), #preferential hiring and promotion of blacks?
+df10 <- anes_use %>% 
+  select(race, blck_got_less) %>% 
+  group_by(race) %>% 
+  count(blck_got_less) %>% 
+  mutate(prop = round(n/sum(n),2))
+levels(df10$race) <- c("White non-His", "Black non-His", "Asian or Pacific Islander", 
+                  "American Indian or Alaska Native", "Hispanic", "Other")
+
+ggplot(df10, aes(x=race, y=prop, fill=blck_got_less)) +
+  geom_bar(stat='identity')+
+  labs(title='Do you agree Blacks Gotten Less than They Deserve Over the Past Few Years?',
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  geom_text(geom='text', position = 'stack', aes(x=race, y=prop, label=prop), size=2)+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+```{r message=FALSE, warning=FALSE}
+df11 <- anes_use %>% 
+  select(race, blck_influence_politics) %>% 
+  filter(!is.na(blck_influence_politics)) %>% 
+  group_by(race) %>% 
+  count(blck_influence_politics) %>% 
+  mutate(prop = round(n/sum(n),2))
+levels(df11$race) <- c("White non-His", "Black non-His", "Asian or Pacific Islander", 
+                  "American Indian or Alaska Native", "Hispanic", "Other")
+
+ggplot(df11, aes(x=race, y=prop, fill=blck_influence_politics)) +
+  geom_bar(stat='identity')+
+  labs(title="In American Politics, Blacks' Influence?",
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  geom_text(geom='text', position = 'stack', aes(x=race, y=prop, label=prop), size=2)+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90))
+
+df14 <- anes_use %>% 
+  select(blck_influence_politics) %>% 
+  filter(!is.na(blck_influence_politics)) %>% 
+  group_by(blck_influence_politics) %>% 
+  count(blck_influence_politics)
+
+ggplot(df14, aes(x=blck_influence_politics, y=n)) +
+  geom_bar(stat='identity')
+```
+
+```{r message=FALSE, warning=FALSE}
+df12 <- anes_use %>% 
+  select(race, aid_to_blck) %>% 
+  filter(!is.na(aid_to_blck)) %>% 
+  group_by(race) %>% 
+  count(aid_to_blck) %>% 
+  mutate(prop = round(n/sum(n),2))
+levels(df12$race) <- c("White non-His", "Black non-His", "Asian or Pacific Islander", 
+                  "American Indian or Alaska Native", "Hispanic", "Other")
+
+ggplot(df12, aes(x=race, y=prop, fill=aid_to_blck)) +
+  geom_bar(stat='identity')+
+  labs(title="Aid to Blacks Scale",
+       x='',
+       y='',
+       fill='')+
+   scale_fill_brewer(palette = "PRGn")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+```{r message=FALSE, warning=FALSE}
+ #    blck_hiring = as_factor(VCF0867), #preferential hiring and promotion of blacks?
+df13 <- anes_use %>% 
+  select(race, blck_hiring) %>% 
+  filter(!is.na(blck_hiring)) %>% 
+  group_by(race) %>% 
+  count(blck_hiring) %>% 
+  mutate(prop = round(n/sum(n),2))
+levels(df13$race) <- c("White non-His", "Black non-His", "Asian or Pacific Islander", 
+                  "American Indian or Alaska Native", "Hispanic", "Other")
+
+ggplot(df13, aes(x=race, y=prop, fill=blck_hiring)) +
+  geom_bar(stat='identity')+
+  labs(title="Are You For or Against Preferential Hiring and Promotion of Blacks?",
+       x='',
+       y='',
+       fill='')+
+  scale_fill_manual(values=cbPalette)+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90))
+
+df14 <- anes_use %>% 
+  select(blck_hiring) %>% 
+  filter(!is.na(blck_hiring)) %>% 
+  group_by(blck_hiring) %>% 
+  count(blck_hiring)
+
+ggplot(df14, aes(x=blck_hiring, y=n)) +
+  geom_bar(stat='identity')
+```
+
+
+
+```{r echo=FALSE}
+# something funny lol
+# plot(anes_use$blck_hardworking_lazy)
+# plot(anes_use$white)
+# plot(anes_use$his)
+# plot(anes_use$asian)
+# anes_use %>% filter(race=="2. Black non-Hispanic (1948-2012)") %>% select(blck_hardworking_lazy) %>% plot()
+# anes_use %>% filter(race=="2. Black non-Hispanic (1948-2012)") %>% select(white) %>% plot()
+# anes_use %>% filter(race=="3. Asian or Pacific Islander, non-Hispanic (1966-2012)") %>% select(blck_hardworking_lazy) %>% plot()
+# anes_use %>% filter(race=="1. White non-Hispanic (1948-2012)") %>% select(blck_hardworking_lazy) %>% plot()
+# anes_use %>% filter(race=="5. Hispanic (1966-2012)") %>% select(his) %>% plot()
+```
+
+### Limitations
++ sampling bias ...
++ omited many NAs, less information, or the NAs represents something that we may missed
++ not 100% correct to use those variables to represent people's opinions on black people
+
+
+
+
+
+
+
