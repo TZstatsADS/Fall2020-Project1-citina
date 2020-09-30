@@ -1,5 +1,5 @@
 ---
-title: "Voting behaviors of those who thought black people deserve more rights"
+title: "Voting Behaviors of Those Who Thought Black People Deserve More Rights"
 author: "Citina Liang"
 output:
   html_document:
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## Introduction
-This year is a special year, the world is experiencing the pademic, the Black Lives Matter Protest XX in the U.S, what's more, it's also the election year. The world is moving in a fast peace than ever. Will what hapeened in the past happen again? Is what is happening today gonna change what tomorrow's gonna be? This project is to explore during 1972 and 2016, who were the people thought black people are getting less than what they deserved and should have more rights in the society. And what was their voting behavior.
+This year is a special year, the U.S, experienced the unprecedented COVID pandemic, the Black Lives Matter Protest, what’s more, it is also an election year. The winner of an election will shape the U.S. in every way in the next four years. The stake is high. This project is to explore voters’ behavior during 1988 and 2016, specifically, who thought black people are getting less than what they deserved and should have more rights in the society.
 
 ```{r load libraries, warning=FALSE, message=FALSE, include=FALSE}
 packages.used=as.list(
@@ -128,7 +128,7 @@ ggplot(df1, aes(x=year, y=prop, fill=voted_president)) +
   theme_minimal()
 ```
 
-In general, the diffences between Democrat and Republican are not large, expect for in 2008 (president Obama), the difference was 0.25. And we can see even sometimes one party has higher percentage of voted, the final result doesn't bring into correspondence. One example is the election in 2016, the percentage voted for Democrat is 3% higher than Republican, and as oppose to many medias would expect, Republican won the election. This is because of the U.S. system of election of president.
+In general, the differences between Democrat and Republican are not large, except for 2008 (president Obama), the difference was 0.25. Sometimes one party may have a greater number of popular votes, or the total percentage of votes cast for a presidential candidate. The election result doesn’t represent the outcome of the popular vote. One example was the election in 2016, the Democrat had 3% more in popular vote than the Republican’s. Contrary to medias expectations, Republican won the election. That was because of the U.S. system depends on electoral college, instead of the popular vote.
 
 ```{r}
 df2 <- anes_use %>% 
@@ -150,9 +150,10 @@ ggplot(df2, aes(x=year, y=prop, fill=voted_president)) +
   theme_minimal()
 ```
 
-One interesting finding here is in 2012, most of black people voted for Democrat (Obama) without any suprise. In the same year, white people tend to vote for Republican, the percentage is similar, but still, higher in Republican. For other races, the percentage of Demorcrat is higher than Republican in general.
+One interesting finding here was in 2012. Most of black people voted for Democrat (Obama). In the same year, white people tend to vote for Republican. Both of these percentages were very close, but still there was a higher percentage for white people who voted for the Republican. For other races, the percentage of population voted for Democrat was higher than Republican in general.
 
-Another interesting finding is in 2016, an obvious higher percentage in people with other races expect white voted for Democrat rather than Republican. 
+Another interesting finding was in 2016, for all races except White, there was higher percentage of the population voted for Democrat rather than Republican.
+
 
 ## Who cares about black people's rights?
 ### variables chosen to measure if a voter believe black people should have more rights:
@@ -276,10 +277,17 @@ ggplot(df7, aes(x=year, y=prop, fill=occupation)) +
   theme_minimal()
 ```
 
-+ The race percentage higest first three: White non-Hispanic, Balck non-Hispanic, Hispanic
-+ There are slightly higher percentage of women than men
-+ Starting from 2000, over half of the people who voted are with at least some college degreesnot necessarliy people with high education being more active since 2000, can be education level are higher in general
-+ Occupation data in 2008, 2012 and 2016 are not available, the question was not asked in these years
+1. Each election’s voter population broken down by race:
+  * Top three population in every election: White non-Hispanic, Black non-Hispanic, Hispanic
+
+2.	Each election’s voter population broken down by gender
+  *	Women comprise of a slightly higher percentage of the voter population
+
+3. Each election’s voter population broken down by education
+  * Starting from 2000, over half of the people who voted obtained at least some college degrees
+  * Since 2000, people with high education are not necessary being more active. There could due to an inflation in education level.
+
+4. Occupation data in 2008, 2012 and 2016 are not available, the question was not asked in these years
 
 ### What are the survey results for those questions we are interested in?
 ```{r message=FALSE, warning=FALSE}
@@ -322,11 +330,11 @@ g1
 g2
 ```
 
-+ The two plots above are showing us the same information, but from different perspctive.
++ The two plots above show the same information, but from different perspectives.
 
-+ Of those who are strongly agree, most are White, but since there are more White respondents in the survey, we can't easily tell what is the genral opinion of people in different race groups. so we need to take a look at the second plot.
++ Of those who strongly agree, most are White, but since there are more White respondents in the survey, we can’t easily tell what is the general opinion of people in different race groups. so, we need to take a look at the second plot.
 
-+ On the second graph XX we can see the precetages of **White, Asian or Pacific Islander, American Indian or Alaska Native and other race** agree and disagree with this statement are similar almost half and half; and as expected, most **Black** people strongly or somewhat agree with it; also, of those **Hispanic** people, agree is higher than not agree 
++ On the second graph we can see the precetages of **White, Asian or Pacific Islander, American Indian or Alaska Native** and **Other race** who (strongly agree and somewhat disagree) and (strongly disagree and somewhat disagree) are similar. On the other hand, the majority of **Black** people strongly or somewhat agree with it; also, the percentage of **Hispanic** people who agree is higher than those who disagree.  
 
 ```{r message=FALSE, warning=FALSE}
 df14 <- anes_use %>% 
@@ -499,6 +507,7 @@ ggarrange(g1, g2, widths = c(1, 2))
 ```
 
 According to the results above, I selected these questions that are most representative for the opinion on if black people have the rights they deserve:
+
 + Do you agree Blacks Should Not Have Special Favors to Succeed?
 keep those neither agree or disagree, disagree somewhat and disagree strongly
 
