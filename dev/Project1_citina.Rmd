@@ -82,17 +82,12 @@ anes_use <- anes_use %>% filter(!is.na(voted_president) & !is.na(gender) & !is.n
                                 & !is.na(age) & !is.na(aid_to_blck) & !is.na(blck_not_spec)
                                 & !is.na(blck_hard_succeed) & !is.na(blck_got_less)) %>%  droplevels()
 
-library(DT)
-#datatable(anes_use, options = list(pageLength = 5))
+
 levels(anes_use$voted_president) <- c("1. Democrat", "2. Republican", "3. Other (incl. 3d/minor party candidates and write-ins)",
                                       "3. Other (incl. 3d/minor party candidates and write-ins)", 
                                       "7. Did not vote or voted but not for president (exc.1972)")
 
 save(anes_use, file="../output/data_use.RData")
-```
-
-```{r, include=FALSE}
-load(file = "../output/data_use.RData")
 ```
 
 First, let's do a **history review**, below is the timeline of voting rights in the U.S. check the full version out [here](https://en.wikipedia.org/wiki/Timeline_of_voting_rights_in_the_United_States).
@@ -104,6 +99,12 @@ First, let's do a **history review**, below is the timeline of voting rights in 
 - 1971: Adults aged 18 through 21 are granted the right to vote.
 
 Based on the voting rights changes listed above. I select these years' suvery that contain questions we are interested: 1988, 1992, 2000, 2004, 2008, 2012, 2016.
+
+```{r}
+load(file = "../output/data_use.RData")
+library(DT)
+datatable(anes_use, options = list(pageLength = 5))
+```
 
 ## General findings
 ```{r}
