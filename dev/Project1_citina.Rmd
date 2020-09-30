@@ -103,7 +103,7 @@ Based on the voting rights changes listed above. I select these years' suvery th
 ```{r}
 load(file = "../output/data_use.RData")
 library(DT)
-datatable(anes_use, options = list(pageLength = 5))
+#datatable(anes_use, options = list(pageLength = 5))
 ```
 
 ## General findings
