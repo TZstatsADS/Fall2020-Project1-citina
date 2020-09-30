@@ -277,17 +277,20 @@ ggplot(df7, aes(x=year, y=prop, fill=occupation)) +
   theme_minimal()
 ```
 
-1. Each election’s voter population broken down by race:
+**Each election’s voter population broken down by race:**
+
   * Top three population in every election: White non-Hispanic, Black non-Hispanic, Hispanic
+  
+**Each election’s voter population broken down by gender:**
 
-2.	Each election’s voter population broken down by gender
   *	Women comprise of a slightly higher percentage of the voter population
+  
+**Each election’s voter population broken down by education:**
 
-3. Each election’s voter population broken down by education
   * Starting from 2000, over half of the people who voted obtained at least some college degrees
   * Since 2000, people with high education are not necessary being more active. There could due to an inflation in education level.
-
-4. Occupation data in 2008, 2012 and 2016 are not available, the question was not asked in these years
+  
+**Occupation data in 2008, 2012 and 2016 are not available, the question was not asked in these years**
 
 ### What are the survey results for those questions we are interested in?
 ```{r message=FALSE, warning=FALSE}
