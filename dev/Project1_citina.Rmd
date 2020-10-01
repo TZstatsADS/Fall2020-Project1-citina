@@ -552,11 +552,13 @@ ggplot(df15, aes(x='', y=Freq, fill=Var1))+
   scale_fill_manual(values=cbPalette)+
   geom_text(aes(label = paste(round(Freq / sum(Freq) * 100, 1), "%")),
             position = position_stack(vjust = 0.5)) +
-  labs(fill='')+
+  labs(fill='',
+       x='',
+       y='')+
   theme_minimal()
 ```
 
-### Voting behavior:
+### Voting behavior
 As shown on the plot above, among these people, 74.6% of them voted for Democrat, 16.6% of them did not vote or voted but not for president and only 5.5% of them voted for Republican. And based on the voting results of blacks over years, the precentage voted for Democrat is always higher than Republican's.
 
 From another aspect, among all Democrat's voters, 18.4% of them think black people did not get what they deserve and need to be given more help and rights, and only 1.8% of Republican's voters have the same idea.
