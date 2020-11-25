@@ -564,7 +564,7 @@ As shown on the plot above, among these people, 74.6% of them voted for Democrat
 From another aspect, among all Democrat's voters, 18.4% of them think black people did not get what they deserve and need to be given more help and rights, and only 1.8% of Republican's voters have the same idea.
 
 ### Conclusion
-Based on the analysis above, voters who cares about Black people's equal rights are more likely to vote for Demorcrat, and their characteristics are probably black or multiple races or asian or pacific  islander, has college or advanced degree and age between 17 and 34. However, the result is a general case and summerized from the ANES survey result, which can be bias, and definately not a standard to tell who will stand up for equal rights for minority ethnic. There can be people race is White or people don't have a college degree or people above age 35 or people voted for Republican and also fighting for minority ethnic people's rights.
+Based on the analysis above, voters who cares about Black people's equal rights are more likely to vote for Democrat, and their characteristics are probably black or multiple races or Asian or pacific islander, has college or advanced degree and age between 17 and 34. However, the result is a general case and summarized from the ANES survey result, which can be bias, and definitely not a standard to tell who will stand up for equal rights for minority ethnic. There can be people race is White or people don't have a college degree or people above age 35 or people voted for Republican and also fighting for minority ethnic people's rights.
 
 ### Limitations
 + The survey data can have sampleing bias when collecting answers form people.
