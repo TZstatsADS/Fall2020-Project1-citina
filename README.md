@@ -14,6 +14,8 @@ Term: Fall 2020
 
 + Project summary: **This year is a special year, the U.S, experienced the unprecedented COVID pandemic, the Black Lives Matter Protest, what’s more, it is also an election year. The winner of an election will shape the U.S. in every way in the next four years. The stake is high. This project is to explore voters’ behavior during 1988 and 2016, specifically, who thought black people are getting less than what they deserved and should have more rights in the society.**
 
++ Data Source: [American National Election Studies](https://electionstudies.org)
+
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
 ```
